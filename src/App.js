@@ -6,16 +6,37 @@ class App extends React.Component {
         super(props, context);
 
         this.state = {
-            currencies: ["EUR", "PLN"],
+            currencies: ["PLN"],
             fromValue: 1,
-            fromCurrency: "EUR",
-            toCurrency: "EUR",
+            fromCurrency: "PLN",
+            toCurrency: "PLN",
             toValue: 1,
             exchangeRate: {
-                "EUR": 1,
-                "PLN": 4.53
+                "PLN": 1
             }
         }
+    }
+
+    componentDidMount() {
+        fetch("https://api.nbp.pl/api/exchangerates/tables/A?format=json")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    let exchangeRate = {"PLN": 1}
+                    let currencies = ["PLN"]
+                    result[0].rates.forEach(rate => {
+                        exchangeRate[rate.code] = rate.mid
+                        currencies.push(rate.code);
+                    })
+                    this.setState({
+                        currencies,
+                        exchangeRate
+                    })
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )
     }
 
     handleFromCurrencyChange = (event) => {
@@ -31,8 +52,9 @@ class App extends React.Component {
     }
 
     handleSubmit = (event) => {
-        let exchangeRateForCurrency = this.state.exchangeRate[this.state.toCurrency];
-        this.setState({toValue: this.state.fromValue * exchangeRateForCurrency});
+        let exchangeRateForSourceCurrency = this.state.exchangeRate[this.state.fromCurrency];
+        let exchangeRateForTargetCurrency = this.state.exchangeRate[this.state.toCurrency];
+        this.setState({toValue: this.state.fromValue * exchangeRateForSourceCurrency / exchangeRateForTargetCurrency});
         event.preventDefault();
     }
 
@@ -48,7 +70,7 @@ class App extends React.Component {
                     )}
                 </select>
                 <input type="submit" value="Przelicz"/>
-                <input type="text" value={this.state.toValue} disabled={true}/>
+                <input type="text" value={this.state.toValue.toFixed(2)} disabled={true}/>
                 <select value={this.state.toCurrency} onChange={this.handleToCurrencyChange}>
                     {this.state.currencies.map(
                         currency =>
@@ -59,5 +81,6 @@ class App extends React.Component {
         </div>
     }
 }
+
 
 export default App;
