@@ -12,7 +12,7 @@ class App extends React.Component {
             toCurrency: "PLN",
             toValue: 1,
             exchangeRate: {
-                "PLN": {"PLN": {mid: 1, currency: "polski złoty", code: "PLN"}}
+                "PLN": {mid: 1, currency: "polski złoty", code: "PLN"}
             }
         };
     }
