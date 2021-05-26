@@ -12,9 +12,9 @@ class App extends React.Component {
             toCurrency: "PLN",
             toValue: 1,
             exchangeRate: {
-                "PLN": 1
+                "PLN": {"PLN": {mid: 1, currency: "polski złoty", code: "PLN"}}
             }
-        }
+        };
     }
 
     componentDidMount() {
@@ -22,10 +22,10 @@ class App extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    let exchangeRate = {"PLN": 1}
-                    let currencies = ["PLN"]
+                    let exchangeRate = {"PLN": {mid: 1, currency: "polski złoty", code: "PLN"}};
+                    let currencies = ["PLN"];
                     result[0].rates.forEach(rate => {
-                        exchangeRate[rate.code] = rate.mid
+                        exchangeRate[rate.code] = rate;
                         currencies.push(rate.code);
                     })
                     this.setState({
@@ -52,8 +52,8 @@ class App extends React.Component {
     }
 
     handleSubmit = (event) => {
-        let exchangeRateForSourceCurrency = this.state.exchangeRate[this.state.fromCurrency];
-        let exchangeRateForTargetCurrency = this.state.exchangeRate[this.state.toCurrency];
+        let exchangeRateForSourceCurrency = this.state.exchangeRate[this.state.fromCurrency].mid;
+        let exchangeRateForTargetCurrency = this.state.exchangeRate[this.state.toCurrency].mid;
         this.setState({toValue: this.state.fromValue * exchangeRateForSourceCurrency / exchangeRateForTargetCurrency});
         event.preventDefault();
     }
@@ -62,19 +62,36 @@ class App extends React.Component {
         return <div className="App App-header">
             <h1>Przelicznik walut</h1>
             <form id="exchangeForm" onSubmit={this.handleSubmit}>
-                <input type="text" value={this.state.fromValue} onChange={this.handleFromValueChange}/>
-                <select value={this.state.fromCurrency} onChange={this.handleFromCurrencyChange}>
+                <input type="text"
+                       value={this.state.fromValue}
+                       onChange={this.handleFromValueChange}/>
+                <select value={this.state.fromCurrency}
+                        onChange={this.handleFromCurrencyChange}
+                        title={this.state.exchangeRate[this.state.fromCurrency].currency}>
                     {this.state.currencies.map(
                         currency =>
-                            <option key={currency} value={currency}>{currency}</option>
+                            <option key={currency}
+                                    value={currency}
+                                    title={this.state.exchangeRate[currency].currency}>
+                                {currency}
+                            </option>
                     )}
                 </select>
                 <input type="submit" value="Przelicz"/>
-                <input type="text" value={this.state.toValue.toFixed(2)} disabled={true}/>
-                <select value={this.state.toCurrency} onChange={this.handleToCurrencyChange}>
+                <input type="text"
+                       value={this.state.toValue.toFixed(2)}
+                       disabled={true}
+                       title={this.state.exchangeRate[this.state.toCurrency].currency}/>
+                <select value={this.state.toCurrency}
+                        onChange={this.handleToCurrencyChange}
+                        title={this.state.exchangeRate[this.state.fromCurrency].currency}>
                     {this.state.currencies.map(
                         currency =>
-                            <option key={currency} value={currency}>{currency}</option>
+                            <option key={currency}
+                                    value={currency}
+                                    title={this.state.exchangeRate[currency].currency}>
+                                {currency}
+                            </option>
                     )}
                 </select>
             </form>
