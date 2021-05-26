@@ -59,9 +59,9 @@ class App extends React.Component {
     }
 
     render() {
-        return <div>
-            <div>Przelicznik walut</div>
-            <form onSubmit={this.handleSubmit}>
+        return <div className="App App-header">
+            <h1>Przelicznik walut</h1>
+            <form id="exchangeForm" onSubmit={this.handleSubmit}>
                 <input type="text" value={this.state.fromValue} onChange={this.handleFromValueChange}/>
                 <select value={this.state.fromCurrency} onChange={this.handleFromCurrencyChange}>
                     {this.state.currencies.map(
