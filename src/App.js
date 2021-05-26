@@ -84,7 +84,7 @@ class App extends React.Component {
                        title={this.state.exchangeRate[this.state.toCurrency].currency}/>
                 <select value={this.state.toCurrency}
                         onChange={this.handleToCurrencyChange}
-                        title={this.state.exchangeRate[this.state.fromCurrency].currency}>
+                        title={this.state.exchangeRate[this.state.toCurrency].currency}>
                     {this.state.currencies.map(
                         currency =>
                             <option key={currency}
